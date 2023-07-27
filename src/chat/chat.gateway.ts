@@ -11,6 +11,7 @@ import {
 import { ChatService } from './chat.service';
 import { Socket, Server } from 'socket.io';
 import sessionMiddleware, { removeSession, sessions } from './middleware/session.middleware';
+import { ChatMessage } from './entities/ChatMessage';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
@@ -24,11 +25,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
 
   handleConnection(client: Socket, ...args: any[]) {
     client.emit('sessionCreated', client.session);
+    client.join(`user#${client.session.userId}`);
   }
 
   @SubscribeMessage('chatMessage')
-  handleNewChatMessage(@MessageBody() message: string, @ConnectedSocket() client: Socket): boolean {
-    this.server.emit('chatMessage', message);
+  handleNewChatMessage(@MessageBody() message: ChatMessage, @ConnectedSocket() client: Socket): boolean {
+    this.server.to(`user#${message.from}`).to(`user#${message.to}`).emit('chatMessage', message);
     return true;
   }
 }
