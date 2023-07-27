@@ -26,6 +26,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection {
   handleConnection(client: Socket, ...args: any[]) {
     client.emit('sessionCreated', client.session);
     client.join(`user#${client.session.userId}`);
+    client.emit('activeUsers', sessions.map(session => session.userId));
   }
 
   @SubscribeMessage('chatMessage')
