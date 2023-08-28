@@ -4,7 +4,6 @@ import { Session } from "src/types/custom/Session";
 
 export const users = [1, 2, 3, 4, 5];
 export const sessions = [] as Session[];
-let userIdCounter = 0;
 
 export const removeSession = (userId) => {
   const index = sessions.findIndex(session => session.userId === userId)
